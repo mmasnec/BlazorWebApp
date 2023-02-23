@@ -1,0 +1,24 @@
+[
+  {
+    "broj_tecajnice": "39",
+    "datum_primjene": "2023-02-23",
+    "drzava": "SAD",
+    "drzava_iso": "USA",
+    "sifra_valute": "840",
+    "valuta": "USD",
+    "kupovni_tecaj": "1,0660",
+    "srednji_tecaj": "1,0644",
+    "prodajni_tecaj": "1,0628"
+  },
+  {
+    "broj_tecajnice": "39",
+    "datum_primjene": "2023-02-23",
+    "drzava": "Poljska",
+    "drzava_iso": "POL",
+    "sifra_valute": "985",
+    "valuta": "PLN",
+    "kupovni_tecaj": "4,7514",
+    "srednji_tecaj": "4,7443",
+    "prodajni_tecaj": "4,7372"
+  }
+]

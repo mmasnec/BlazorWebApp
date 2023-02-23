@@ -1,0 +1,107 @@
+﻿@page "/prikaz"
+@inject HttpClient Http
+
+<h3>Prikaz</h3>
+
+@if (tecajValuta == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Broj tečajnice</th>
+                <th>Datum primjene</th>
+                <th>Država</th>
+                <th>Država ISO</th>
+                <th>Šifra valute</th>
+                <th>Valuta</th>
+                <th>Kupovni tečaj</th>
+                <th>Srednji tečaj</th>
+                <th>Prodajni tečaj</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tecaj in tecajValuta)
+            {
+                <tr>
+                    <td>@tecaj.broj_tecajnice</td>
+                    <td>@tecaj.datum_primjene.ToShortDateString()</td>
+                    <td>@tecaj.drzava</td>
+                    <td>@tecaj.drzava_iso</td>
+                    <td>@tecaj.sifra_valute</td>
+                    <td>@tecaj.valuta</td>
+                    <td>@tecaj.kupovni_tecaj</td>
+                    <td>@tecaj.srednji_tecaj</td>
+                    <td>@tecaj.prodajni_tecaj</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <input id="Text1" type="number" @bind-value="iznosEura" />
+    <button @onclick="Preracunaj">Preračunaj</button>
+    <p>U dolarima: @outputUSD</p>
+    <p>U poljskim zlotama: @outputPLN</p>
+
+}
+
+
+@code {
+    @using System.Text.Unicode
+    @using System.Text.Json
+    @using System.Net.Http.Json
+
+    private TecajValuta[] tecajValuta;
+
+    private decimal tecajKupovni;
+    private decimal iznosEura;
+    private decimal outputUSD;
+    private decimal outputPLN;
+    private string vrijednost;
+
+    private void Preracunaj()
+    {
+        @if (iznosEura > 0 && tecajValuta != null)
+        {
+            foreach (var valuta in tecajValuta)
+            {
+                if (valuta.valuta == "USD")
+                {
+                    outputUSD = Math.Round(iznosEura * Decimal.Parse(valuta.kupovni_tecaj)/10000, 2);
+                }
+                else outputPLN = Math.Round(iznosEura * Decimal.Parse(valuta.kupovni_tecaj)/10000, 2);
+            }
+
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        //var options = new JsonSerializerOptions
+        //{
+        //    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(UnicodeRanges.All)
+        //};
+                //Iz nekog razloga ne dohvaća sa URL-a
+        //tecajValuta = await Http.GetFromJsonAsync<TecajValuta[]>("https://api.hnb.hr/tecajn-eur/v3?valuta=PLN&valuta=USD");
+
+
+        tecajValuta = await Http.GetFromJsonAsync<TecajValuta[]>("sample-data/valute.json");
+
+    }
+
+    public class TecajValuta
+    {
+        public string broj_tecajnice { get; set; }
+        public DateTime datum_primjene { get; set; }
+        public string drzava { get; set; }
+        public string drzava_iso { get; set; }
+        public string sifra_valute { get; set; }
+        public string valuta { get; set; }
+        public string kupovni_tecaj { get; set; }
+        public string srednji_tecaj { get; set; }
+        public string prodajni_tecaj { get; set; }
+    }
+}

@@ -1,0 +1,48 @@
+﻿@page "/fruit"
+@inject HttpClient Http
+
+<h3>Fruit</h3>
+
+@if (fruits == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Fruit</th>
+                <th>Size</th>
+                <th>Color</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var fruit in fruits)
+            {
+                <tr>
+                    <td>@fruit.fruit</td>
+                    <td>@fruit.size</td>
+                    <td>@fruit.color</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+    @code {
+private FruitInfo[] fruits;
+
+    protected override async Task OnInitializedAsync()
+    {
+        fruits = await Http.GetFromJsonAsync<FruitInfo[]>("sample-data/weather - Copy.json");
+    }
+
+    public class FruitInfo
+    {
+        public string fruit { get; set; }
+        public string size { get; set; }
+        public string color { get; set; }
+    }
+    }
