@@ -1,0 +1,54 @@
+﻿@page "/prijava"
+@inject NavigationManager navigationManager
+@using System.Security.Cryptography
+@using System.Text
+
+    <h3>Prijava</h3>
+
+    Korisničko ime:
+    <input id="TxtKorisnickoIme" @bind-value="KorisnickoIme" type="text" />
+    Lozinka:
+    <input id="TxtLozinka" @bind-value="Lozinka" type="password" />
+    <br />
+    <button @onclick="PrijavaKorisnika">Prijava</button>
+    <p>@Poruka</p>
+
+    @code {
+
+        private string KorisnickoIme;
+        private string Lozinka;
+        private string Poruka;
+        public static bool Prijavljen = false;
+
+        protected override async Task OnInitializedAsync()
+        {
+            if (Prijavljen)
+            {
+                navigationManager.NavigateTo("/prikaz");
+
+            }
+
+        }
+
+        private void PrijavaKorisnika()
+        {
+            string hardcodedIme = "username";
+            string hardcodedLozinka = "A6xnQhbz4Vx2HuGl4lXwZ5U2I8iziLRFnhP5eNfIRvQ=";
+
+            SHA256 sha256 = SHA256.Create();
+            byte[] hashValue = sha256.ComputeHash(Encoding.UTF8.GetBytes(Lozinka));
+            string hashLozinka = Convert.ToBase64String(hashValue);
+
+
+            if (KorisnickoIme == hardcodedIme && hashLozinka == hardcodedLozinka)
+            {
+                Prijavljen = true;
+                navigationManager.NavigateTo("/prikaz");
+            }
+            else
+            {
+                Poruka = "Neuspješna prijava!";
+            }
+        }
+
+    }

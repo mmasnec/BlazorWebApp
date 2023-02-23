@@ -1,7 +1,10 @@
 ﻿@page "/prikaz"
 @inject HttpClient Http
+@inject NavigationManager navigationManager
 
-<h3>Prikaz</h3>
+
+<h3>Prikaz tečajne liste</h3>
+
 
 @if (tecajValuta == null)
 {
@@ -53,6 +56,8 @@ else
     @using System.Text.Unicode
     @using System.Text.Json
     @using System.Net.Http.Json
+    @using System.Net
+    @using System.IO
 
     private TecajValuta[] tecajValuta;
 
@@ -62,6 +67,9 @@ else
     private decimal outputPLN;
     private string vrijednost;
 
+
+
+
     private void Preracunaj()
     {
         @if (iznosEura > 0 && tecajValuta != null)
@@ -70,23 +78,40 @@ else
             {
                 if (valuta.valuta == "USD")
                 {
-                    outputUSD = Math.Round(iznosEura * Decimal.Parse(valuta.kupovni_tecaj)/10000, 2);
+                    outputUSD = Math.Round(iznosEura * Decimal.Parse(valuta.kupovni_tecaj) / 10000, 2);
                 }
-                else outputPLN = Math.Round(iznosEura * Decimal.Parse(valuta.kupovni_tecaj)/10000, 2);
+                else outputPLN = Math.Round(iznosEura * Decimal.Parse(valuta.kupovni_tecaj) / 10000, 2);
             }
 
         }
     }
 
+
+
+
     protected override async Task OnInitializedAsync()
     {
+        if (!Prijava.Prijavljen)
+        {
+            navigationManager.NavigateTo("/prijava");
+
+        }
+
         //var options = new JsonSerializerOptions
         //{
         //    Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(UnicodeRanges.All)
         //};
-                //Iz nekog razloga ne dohvaća sa URL-a
+
+
+        //Iz nekog razloga ne dohvaća sa URL-a
         //tecajValuta = await Http.GetFromJsonAsync<TecajValuta[]>("https://api.hnb.hr/tecajn-eur/v3?valuta=PLN&valuta=USD");
 
+
+        //var response = await Http.GetAsync("https://api.hnb.hr/tecajn-eur/v3?valuta=PLN&valuta=USD");
+        //if (response.IsSuccessStatusCode)
+        //{
+        //    tecajValuta = await response.Content.ReadFromJsonAsync<TecajValuta[]>();
+        //}
 
         tecajValuta = await Http.GetFromJsonAsync<TecajValuta[]>("sample-data/valute.json");
 
@@ -104,4 +129,6 @@ else
         public string srednji_tecaj { get; set; }
         public string prodajni_tecaj { get; set; }
     }
+
+
 }
